@@ -1,5 +1,3 @@
-
-
 let list = [];
 $("#add").click(() => {
   if ($("input[type=text").val().trim().length > 0) {
@@ -12,26 +10,27 @@ const renderList = () => {
   $("ul").html("");
   list.forEach((element, i) => {
     $("ul").append(
-      `<li id='${"li" + i}'><span id='${"allSpan" + i}'>${
+      `<li id='${"li" + i}'><span id='${
+        "allSpan" + i
+      }'><span onclick='completed(${i})' id='${"element" + i}'>${
         element.item
-      }  <span onclick='edit(${i})'>Edit</span> <span onclick='remove(${i})'>Remove</span> </span></li>`
+      }  </span><span id='ed' onclick='edit(${i})'>Edit</span> <span id='ed' onclick='remove(${i})'>Remove</span> </span></li>`
     );
+    if (list[i].isCompleted) {
+      $("#element" + i).css("text-decoration", "line-through");
+    }
   });
+  let count = list.filter((item) => item.isCompleted === false).length;
+  $("#count").text(count);
 };
 
 const edit = (i) => {
   $("#allSpan" + i).hide();
   $("#li" + i).append(`<input type='text' id='ed' value='${list[i].item}'>`);
-  console.log($("input#ed"));
-  $("body").click(() => {
-    $("input#ed").change((e) => {
-      list[i].item = e.target.value;
-      console.log("trigered");
-      renderList();
-    });
+  $("input#ed").change((e) => {
+    list[i].item = e.target.value;
+    renderList();
   });
-
-
 };
 
 const remove = (i) => {
@@ -40,15 +39,20 @@ const remove = (i) => {
   renderList();
 };
 
-//   const completed = (i) => {
-//     console.log('trigered');
-// //   list.splice(i, 1);
-//   renderList();
-// };
+const completed = (i) => {
+  list[i].isCompleted = !list[i].isCompleted;
+  renderList();
+};
 
 $("#clear").click(() => {
   list = [];
   renderList();
 });
 
-$("#clearCompleted").click(() => {});
+$("#clearCompleted").click(() => {
+  let completedList = list.filter((item) => {
+    return item.isCompleted === false;
+  });
+  list = completedList;
+  renderList();
+});
